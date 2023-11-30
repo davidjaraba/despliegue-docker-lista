@@ -35,7 +35,19 @@ services:
       - ${API_PORT}:${API_PORT}
     networks:
       - despliegue-network
-    
+
+  nginx:
+    container_name: despliegue-nginx
+    image: nginx:latest
+    restart: always
+    ports:
+      - ${NGINX_PORT}:80
+    volumes:
+      - ./public:/usr/share/nginx/html:ro
+    depends_on:
+      - nodejs
+    networks:
+      - despliegue-network
 
 networks:
   despliegue-network:

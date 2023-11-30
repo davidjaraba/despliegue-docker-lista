@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const { MongoClient, ObjectId } = require('mongodb');
+const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -12,12 +13,17 @@ const dbPort = process.env.MONGO_PORT || 27017;
 
 const mongoURI = `mongodb://${dbUser}:${dbPassword}@mongo-db:${dbPort}/${dbName}`;
 
+app.use(cors({
+    origin: 'http://localhost:80'
+}));
+
+
 const collectionName = 'tareas'
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/', express.static(path.join(__dirname, 'public')))
+//app.use('/', express.static(path.join(__dirname, 'public')))
 
 
 app.get('/api/listas', async (req, res) => {
@@ -27,12 +33,12 @@ app.get('/api/listas', async (req, res) => {
 
 app.post('/api/listas', async (req, res) => {
     await save(req.body.nueva);
-    res.redirect('/');
+    res.redirect('http://localhost:80/');
 });
 
 app.delete('/api/listas/:id', async (req, res) => {
     await deleteOne(req.params.id);
-    res.redirect('/');
+    res.redirect('http://localhost:80/');
 });
 
 app.put('/api/listas/:id', async (req, res) => {
