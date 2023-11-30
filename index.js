@@ -10,13 +10,17 @@ const dbUser = process.env.DATABASE_USER || 'postgres';
 const dbPassword = process.env.DATABASE_PASSWORD || 'supersecurepassword';
 const dbName = process.env.MONGO_DATABASE || 'lista';
 const dbPort = process.env.MONGO_PORT || 27017;
+const dbHost = process.env.DATABASE_HOST || 'localhost';
 
-const mongoURI = `mongodb://${dbUser}:${dbPassword}@mongo-db:${dbPort}/${dbName}`;
+
+const mongoURI = `mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`;
 
 app.use(cors({
-    origin: 'http://localhost:80'
+    origin: 'http://localhost',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 204,
 }));
-
 
 const collectionName = 'tareas'
 
@@ -33,16 +37,17 @@ app.get('/api/listas', async (req, res) => {
 
 app.post('/api/listas', async (req, res) => {
     await save(req.body.nueva);
-    res.redirect('http://localhost:80/');
+    res.redirect(`${req.protocol}://${req.hostname}`);
 });
 
 app.delete('/api/listas/:id', async (req, res) => {
     await deleteOne(req.params.id);
-    res.redirect('http://localhost:80/');
+    res.status(204).send();
 });
 
 app.put('/api/listas/:id', async (req, res) => {
     await updateDone(req.params.id, req.body.isDone);
+    res.status(204).send();
 });
 
 async function findAll() {

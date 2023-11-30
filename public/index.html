@@ -131,7 +131,7 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({isDone: Boolean(done)})
-        }).then(() => window.location.reload()).catch(error => console.error('Error:', error));
+        }).catch(error => console.error('Error:', error));
 
     }
 
